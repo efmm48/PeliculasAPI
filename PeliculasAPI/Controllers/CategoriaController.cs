@@ -68,5 +68,39 @@ namespace PeliculasAPI.Controllers
             return CreatedAtRoute("GetCategoria", new { id = categoria.Id }, categoria);
         }
 
+        [HttpPut]
+        [ProducesResponseType(204)] //Good Request
+        [ProducesResponseType(400)] //Bad Request
+        [ProducesResponseType(500)] //Error Interno
+        public async Task<IActionResult> ActualizarCategoria(int id, Categoria categoria) 
+        {
+            if (id == categoria.Id) 
+            {
+                _db.Entry(categoria).State = EntityState.Modified;
+                await _db.SaveChangesAsync();
+                return NoContent();
+            }
+
+            return BadRequest();
+        }
+
+        [HttpDelete]
+        [ProducesResponseType(200)] //Good Request
+        [ProducesResponseType(404)] //Not Found
+        [ProducesResponseType(500)] //Error Interno
+        public async Task<IActionResult> BorrarCategoria(int id)
+        {
+
+            var categoria = await _db.Categorias.FindAsync(id);
+            if (categoria==null)
+            {
+                return NotFound();
+            }
+
+            _db.Categorias.Remove(categoria);
+            await _db.SaveChangesAsync();
+            return NoContent();
+        }
+
     }
 }

@@ -67,5 +67,39 @@ namespace PeliculasAPI.Controllers
 
             return CreatedAtRoute("GetPelicula", new { id = pelicula.Id }, pelicula);
         }
+
+        [HttpPut]
+        [ProducesResponseType(204)] //Good Request
+        [ProducesResponseType(400)] //Bad Request
+        [ProducesResponseType(500)] //Error Interno
+        public async Task<IActionResult> ActualizarPelicula(int id, Pelicula pelicula)
+        {
+            if (id == pelicula.Id)
+            {
+                _db.Entry(pelicula).State = EntityState.Modified;
+                await _db.SaveChangesAsync();
+                return NoContent();
+            }
+
+            return BadRequest();
+        }
+
+        [HttpDelete]
+        [ProducesResponseType(200)] //Good Request
+        [ProducesResponseType(404)] //Not Found
+        [ProducesResponseType(500)] //Error Interno
+        public async Task<IActionResult> BorrarPelicula(int id)
+        {
+
+            var pelicula = await _db.Peliculas.FindAsync(id);
+            if (pelicula == null)
+            {
+                return NotFound();
+            }
+
+            _db.Peliculas.Remove(pelicula);
+            await _db.SaveChangesAsync();
+            return NoContent();
+        }
     }
 }
